@@ -33,7 +33,8 @@ import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 
 @SuppressWarnings("deprecation")
-public class LuceneOutputFormat implements OutputFormat<Tuple, Tuple> {
+public class LuceneOutputFormat extends FileOutputFormat<Tuple, Tuple> {
+// public class LuceneOutputFormat implements OutputFormat<Tuple, Tuple> {
     private static final Logger LOGGER = Logger.getLogger(LuceneOutputFormat.class);
     
     public static final String SINK_FIELDS_KEY = "com.scaleunlimited.cascading.lucene.sinkFields";

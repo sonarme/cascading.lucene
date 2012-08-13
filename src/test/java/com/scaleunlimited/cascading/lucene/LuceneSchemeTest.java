@@ -62,10 +62,7 @@ public class LuceneSchemeTest {
         }
     }
     
-    // TODO Fix this test - currently fails because the LuceneOutputFormat calls Hadoop's
-    // FileOutputFormat.getTaskOutputPath(), but the JobConf doesn't have the "mapred.task.id"
-    // property set up.
-    // @Test
+    @Test
     public void testIndexSink() throws Exception {
         String out = "build/test/IndexSchemaTest/testIndexSink/out";
 
