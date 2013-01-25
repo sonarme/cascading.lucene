@@ -109,9 +109,9 @@ public class LuceneScheme extends Scheme<JobConf, RecordReader<Tuple, Tuple>, Ou
         conf.setOutputFormat(LuceneOutputFormat.class);
 
         try {
-            conf.set(LuceneOutputFormat.SINK_FIELDS_KEY, HadoopUtil.serializeBase64(getSinkFields(), conf));
-            conf.set(LuceneOutputFormat.INDEX_SETTINGS_KEY, HadoopUtil.serializeBase64(_indexSettings, conf));
-            conf.set(LuceneOutputFormat.STORE_SETTINGS_KEY, HadoopUtil.serializeBase64(_storeSettings, conf));
+            conf.set(LuceneOutputFormat.SINK_FIELDS_KEY, HadoopUtil.serializeBase64(getSinkFields()));
+            conf.set(LuceneOutputFormat.INDEX_SETTINGS_KEY, HadoopUtil.serializeBase64(_indexSettings));
+            conf.set(LuceneOutputFormat.STORE_SETTINGS_KEY, HadoopUtil.serializeBase64(_storeSettings));
         } catch (IOException e) {
             throw new TapException("Can't serialize sink fields", e);
         }
