@@ -72,16 +72,16 @@ public class LuceneOutputFormat extends FileOutputFormat<Tuple, Tuple> {
                 _outputFS = _outputPath.getFileSystem(conf);
 
                 // Get the set of fields we're indexing.
-                _sinkFields = HadoopUtil.deserializeBase64(conf.get(SINK_FIELDS_KEY), conf, Fields.class);
+                _sinkFields = (Fields)HadoopUtil.deserializeBase64(conf.get(SINK_FIELDS_KEY));
 
                 _maxSegments = conf.getInt(MAX_SEGMENTS_KEY, DEFAULT_MAX_SEGMENTS);
 
                 int maxFieldLength = conf.getInt(MAX_FIELD_LENGTH_KEY, Integer.MAX_VALUE);
                 Analyzer analyzer = new LimitTokenCountAnalyzer((Analyzer)ReflectionUtils.newInstance(conf.getClass(ANALYZER_KEY, Analyzer.class), conf), maxFieldLength);
-                _index = HadoopUtil.deserializeBase64(conf.get(INDEX_SETTINGS_KEY), conf, Index[].class);
-                _store = HadoopUtil.deserializeBase64(conf.get(STORE_SETTINGS_KEY), conf, Store[].class);
+                _index = (Index[])HadoopUtil.deserializeBase64(conf.get(INDEX_SETTINGS_KEY));
+                _store = (Store[])HadoopUtil.deserializeBase64(conf.get(STORE_SETTINGS_KEY));
 
-                _sinkFields = HadoopUtil.deserializeBase64(conf.get(SINK_FIELDS_KEY), conf, Fields.class);
+                _sinkFields = (Fields)HadoopUtil.deserializeBase64(conf.get(SINK_FIELDS_KEY));
                 _hasBoost = conf.getBoolean(HAS_BOOST_KEY, false);
 
                 String tmpFolder = System.getProperty("java.io.tmpdir");
