@@ -47,7 +47,7 @@ public class LuceneScheme extends Scheme<JobConf, RecordReader<Tuple, Tuple>, Ou
         private Analyzer _analyzer;
         
         public DefaultAnalyzer() {
-            _analyzer = new StandardAnalyzer(Version.LUCENE_36);
+            _analyzer = new StandardAnalyzer(Version.LUCENE_40);
         }
         
         @Override

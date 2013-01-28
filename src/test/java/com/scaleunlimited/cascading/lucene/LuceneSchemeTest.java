@@ -119,7 +119,7 @@ public class LuceneSchemeTest {
             indexReaders[i] = IndexReader.open(new MMapDirectory(indexFile));
         }
 
-        QueryParser parser = new QueryParser(Version.LUCENE_36, "value", new StandardAnalyzer(Version.LUCENE_36));
+        QueryParser parser = new QueryParser(Version.LUCENE_40, "value", new StandardAnalyzer(Version.LUCENE_36));
         IndexSearcher searcher = new IndexSearcher(new MultiReader(indexReaders));
         for (int i = 0; i < 10; i++) {
             TopDocs search = searcher.search(parser.parse("" + i), 1);
