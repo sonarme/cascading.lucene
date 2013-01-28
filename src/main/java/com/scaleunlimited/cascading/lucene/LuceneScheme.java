@@ -103,7 +103,8 @@ public class LuceneScheme extends Scheme<JobConf, RecordReader<Tuple, Tuple>, Ou
 
         conf.setInt(LuceneOutputFormat.MAX_SEGMENTS_KEY, _maxSegments);
         conf.setBoolean(LuceneOutputFormat.HAS_BOOST_KEY, _hasBoost);
-        conf.setClass(LuceneOutputFormat.ANALYZER_KEY, _analyzer, Analyzer.class);
+        if (_analyzer != null)
+            conf.setClass(LuceneOutputFormat.ANALYZER_KEY, _analyzer, Analyzer.class);
         conf.setInt(LuceneOutputFormat.MAX_FIELD_LENGTH_KEY, _maxFieldLength);
         
         LOGGER.info("Initializing Lucene index tap");
