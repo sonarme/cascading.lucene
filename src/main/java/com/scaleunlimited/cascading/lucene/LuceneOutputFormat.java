@@ -88,7 +88,7 @@ public class LuceneOutputFormat extends FileOutputFormat<Tuple, Tuple> {
                 _localIndexFolder = new File(tmpFolder, UUID.randomUUID().toString());
                 final Directory localIndexDirectory = new MMapDirectory(_localIndexFolder);
 
-                final IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_36, analyzer);
+                final IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_40, analyzer);
                 // TODO support setting up max buffered docs/other settings here.
                 _indexWriter = new IndexWriter(localIndexDirectory, iwc);
             } catch (Exception e) {
