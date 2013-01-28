@@ -42,23 +42,8 @@ public class LuceneScheme extends Scheme<JobConf, RecordReader<Tuple, Tuple>, Ou
     private Index[] _indexSettings;
     private boolean _hasBoost;
 
-    public static class DefaultAnalyzer extends Analyzer {
-
-        private Analyzer _analyzer;
-        
-        public DefaultAnalyzer() {
-            _analyzer = new StandardAnalyzer(Version.LUCENE_40);
-        }
-        
-        @Override
-        public TokenStream tokenStream(String fieldName, Reader reader) {
-            // TODO Auto-generated method stub
-            return _analyzer.tokenStream(fieldName, reader);
-        }
-    }
-    
     public LuceneScheme(Fields schemeFields) throws IOException, ParserConfigurationException, SAXException {
-        this(schemeFields, null, null, false, DefaultAnalyzer.class, Integer.MAX_VALUE, LuceneOutputFormat.DEFAULT_MAX_SEGMENTS);
+        this(schemeFields, null, null, false, null, Integer.MAX_VALUE, LuceneOutputFormat.DEFAULT_MAX_SEGMENTS);
     }
     
     public LuceneScheme(Fields schemeFields, Store[] storeSettings, Index[] indexSettings, boolean hasBoost, Class<? extends Analyzer> analyzer, int maxFieldLength, int maxSegments) throws IOException, ParserConfigurationException, SAXException {

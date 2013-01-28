@@ -1,22 +1,21 @@
 package com.scaleunlimited.cascading.lucene;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.util.UUID;
-
+import cascading.flow.hadoop.util.HadoopUtil;
+import cascading.tap.TapException;
+import cascading.tuple.Fields;
+import cascading.tuple.Tuple;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.FileOutputFormat;
 import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.OutputFormat;
 import org.apache.hadoop.mapred.RecordWriter;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.util.Progressable;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LimitTokenCountAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
@@ -27,10 +26,10 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.util.Version;
 
-import cascading.flow.hadoop.util.HadoopUtil;
-import cascading.tap.TapException;
-import cascading.tuple.Fields;
-import cascading.tuple.Tuple;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public class LuceneOutputFormat extends FileOutputFormat<Tuple, Tuple> {
@@ -77,7 +76,9 @@ public class LuceneOutputFormat extends FileOutputFormat<Tuple, Tuple> {
                 _maxSegments = conf.getInt(MAX_SEGMENTS_KEY, DEFAULT_MAX_SEGMENTS);
 
                 int maxFieldLength = conf.getInt(MAX_FIELD_LENGTH_KEY, Integer.MAX_VALUE);
-                Analyzer analyzer = new LimitTokenCountAnalyzer((Analyzer)ReflectionUtils.newInstance(conf.getClass(ANALYZER_KEY, Analyzer.class), conf), maxFieldLength);
+                Class<?> analyzerClass = conf.getClass(ANALYZER_KEY, null);
+
+                Analyzer analyzer = new LimitTokenCountAnalyzer(analyzerClass == null ? new StandardAnalyzer(Version.LUCENE_41) : (Analyzer)ReflectionUtils.newInstance(analyzerClass, conf), maxFieldLength);
                 _index = (Index[])HadoopUtil.deserializeBase64(conf.get(INDEX_SETTINGS_KEY));
                 _store = (Store[])HadoopUtil.deserializeBase64(conf.get(STORE_SETTINGS_KEY));
 
@@ -88,7 +89,7 @@ public class LuceneOutputFormat extends FileOutputFormat<Tuple, Tuple> {
                 _localIndexFolder = new File(tmpFolder, UUID.randomUUID().toString());
                 final Directory localIndexDirectory = new MMapDirectory(_localIndexFolder);
 
-                final IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_40, analyzer);
+                final IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_41, analyzer);
                 // TODO support setting up max buffered docs/other settings here.
                 _indexWriter = new IndexWriter(localIndexDirectory, iwc);
             } catch (Exception e) {
@@ -122,7 +123,7 @@ public class LuceneOutputFormat extends FileOutputFormat<Tuple, Tuple> {
             // We append the boost field at the end, so it's always the last value in the tuple.
             if (_hasBoost) {
                 float boost = value.getFloat(size);
-                doc.setBoost(boost);
+                //doc.setBoost(boost);
             }
             
             _indexWriter.addDocument(doc);

@@ -1,13 +1,5 @@
 package com.scaleunlimited.cascading.lucene;
 
-import static org.junit.Assert.*;
-
-import java.io.File;
-
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.metrics.spi.NullContext;
-import org.junit.Test;
-
 import cascading.flow.Flow;
 import cascading.flow.FlowProcess;
 import cascading.flow.hadoop.HadoopFlowConnector;
@@ -15,7 +7,6 @@ import cascading.flow.hadoop.HadoopFlowProcess;
 import cascading.operation.BaseOperation;
 import cascading.operation.Function;
 import cascading.operation.FunctionCall;
-import cascading.pipe.Each;
 import cascading.pipe.Pipe;
 import cascading.scheme.hadoop.SequenceFile;
 import cascading.tap.SinkMode;
@@ -24,21 +15,25 @@ import cascading.tuple.Fields;
 import cascading.tuple.Tuple;
 import cascading.tuple.TupleEntry;
 import cascading.tuple.TupleEntryCollector;
-
+import org.apache.hadoop.metrics.spi.NullContext;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.MultiReader;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.util.Version;
+import org.junit.Test;
 
-import com.scaleunlimited.cascading.lucene.LuceneScheme.DefaultAnalyzer;
+import java.io.File;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class LuceneSchemeTest {
 
@@ -70,7 +65,7 @@ public class LuceneSchemeTest {
                                             new Store[] { Store.NO }, 
                                             new Index[] { Index.NOT_ANALYZED }, 
                                             false, 
-                                            DefaultAnalyzer.class, 
+                                            null,
                                             Integer.MAX_VALUE, 
                                             10), out,
                         SinkMode.REPLACE);
@@ -99,7 +94,7 @@ public class LuceneSchemeTest {
 
         Store[] storeSettings = new Store[] { Store.YES, Store.YES };
         Index[] indexSettings = new Index[] { Index.NOT_ANALYZED, Index.ANALYZED };
-        LuceneScheme scheme = new LuceneScheme(indexedFields, storeSettings, indexSettings, true, DefaultAnalyzer.class, Integer.MAX_VALUE, 10);
+        LuceneScheme scheme = new LuceneScheme(indexedFields, storeSettings, indexSettings, true, null, Integer.MAX_VALUE, 10);
 
         // Rename the fields from what we've got, to what the Lucene field names should be.
         Pipe indexingPipe = new Pipe("index pipe");
@@ -119,7 +114,7 @@ public class LuceneSchemeTest {
             indexReaders[i] = IndexReader.open(new MMapDirectory(indexFile));
         }
 
-        QueryParser parser = new QueryParser(Version.LUCENE_40, "value", new StandardAnalyzer(Version.LUCENE_36));
+        QueryParser parser = new QueryParser(Version.LUCENE_41, "value", new StandardAnalyzer(Version.LUCENE_41));
         IndexSearcher searcher = new IndexSearcher(new MultiReader(indexReaders));
         for (int i = 0; i < 10; i++) {
             TopDocs search = searcher.search(parser.parse("" + i), 1);
